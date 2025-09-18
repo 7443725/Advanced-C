@@ -1,0 +1,74 @@
+1. Доработайте функционал игры змейка. Реализуйте в игре
+ситуацию, когда змея врезается сама в себя. ВЫПОЛНЕНО
+
+2. Выход за границы экрана. ВЫПОЛНЕНО
+
+void go(struct snake_t *head)
+{
+    char ch = 'Y';
+    int max_x=0, max_y=0;
+    getmaxyx(stdscr, max_y, max_x); // macro - размер терминала
+    mvprintw(head->y, head->x, " "); // очищаем один символ
+    switch (head->direction)
+    {
+        case LEFT:
+            if(head->x <= 0) // Циклическое движение, чтобы не
+// уходить за пределы экрана
+                head->x = max_x;
+            mvprintw(head->y, --(head->x), "%c", ch);
+        break;
+        case RIGHT:
+			if(head->x >= max_x)      //Vihod za granici vipolneno
+                head->x = 0;
+            mvprintw(head->y, ++(head->x), "%c", ch);
+        break;
+        case UP:
+			if(head->y <= 1 )         //Vihod za granici vipolneno
+                head->y = max_y;
+            mvprintw(--(head->y), head->x, "%c", ch);
+        break;
+        case DOWN:
+			if(head->y >= max_y )     //Vihod za granici vipolneno
+                head->y = 1;
+            mvprintw(++(head->y), head->x, "%c", ch);
+        break;
+        default:
+        break;
+    }
+    //Proverca na stolknovenie
+    for(uint8_t i = 0; i < head->tsize;i++)
+    {
+		if(head->x == head->tail[i].x && head->y == head->tail[i].y )
+		{
+			head->life--;
+			mvprintw(head->y, head->x, "%c", ' ');
+			for(size_t i = head->tsize; i>0; i--)
+			{
+				head->tail[i] = head->tail[i-1];
+				if( head->tail[i].y || head->tail[i].x)
+				mvprintw(head->tail[i].y, head->tail[i].x, "%c", ' ');
+			}
+			initHead(head, 10, 10);
+			initTail(head->tail,head->tsize);
+		}
+	}
+    refresh();
+}
+
+3. Переписать timeout через clock. ВЫПОЛНЕНО
+
+ while( key_pressed != STOP_GAME && snake->life != 0)
+    {
+        key_pressed = getch(); // Считываем клавишу
+        go(snake);
+        goTail(snake);
+        mvprintw(0, 80,"Life: %u",snake->life);
+		mvprintw(0, 90,"Point: %u",snake->point);
+		//begin = clock();
+		//while((clock()-begin) < 100)
+		//{}
+        timeout(100); // Задержка при отрисовке
+        changeDirection(snake, key_pressed);
+    }
+
+Но мне не нравиться как отрисовывает при clock(); почемуто голова змеи отдельно?
