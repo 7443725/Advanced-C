@@ -1,0 +1,68 @@
+Задача 1. Выполнено.
+Добавить возможность управления змейкой клавишами
+WSAD (вне зависимости от регистра).
+Зависимости от регистра в соответствии с таблицей.
+W, w Вверх
+S, s Вниз
+A, a Влево
+D, d Вправо
+Для решения предлагается сделать массив кодов управления struct
+control_buttons default_controls[CONTROLS]. CONTROLS –
+определяем количество элементов массива.
+В необходимых функциях в цикле необходимо сравнивать с каждым
+типом управления в цикле
+for (int i = 0; i < CONTROLS; i++)
+ 
+#define KEY_S 83        // HW4
+#define KEY_W 87	// HW4
+#define KEY_A 65	// HW4
+#define KEY_D 68	// HW4
+#define KEY_s 115	// HW4
+#define KEY_w 119	// HW4
+#define KEY_a 97	// HW4
+#define KEY_d 100	// HW4
+
+// HW4
+struct control_buttons default_controls[3] = {
+	{KEY_S, KEY_W, KEY_A, KEY_D},
+	{KEY_s, KEY_w, KEY_a, KEY_d},
+	{KEY_DOWN, KEY_UP, KEY_LEFT, KEY_RIGHT}};
+
+void initSnake(snake_t *head, size_t size, int x, int y, uint8_t l,uint8_t p)
+{
+	tail_t*  tail  = (tail_t*) malloc(MAX_TAIL_SIZE*sizeof(tail_t));
+    initTail(tail, MAX_TAIL_SIZE);
+    initHead(head, x, y);
+    head->tail = tail; // прикрепляем к голове хвост
+    head->tsize = size+1;
+    head->controls[0] = default_controls[0]; // HW4
+    head->controls[1] = default_controls[1]; // HW4
+    head->controls[2] = default_controls[2]; // HW4
+    head->life = l;
+    head->point = p;
+}
+
+Задача 2. Выполнено.
+Написать функцию, которая будет проверять корректность выбранного
+направления. Змейка не может наступать на хвост, поэтому необходимо запретить
+● перемещение справа-налево (при движении RIGHT нажатие стрелки влево),
+● перемещение сверху-вниз (при движении UP нажатие стрелки вниз),
+● перемещение слева-направо (при движении LEFT нажатие стрелки вправо),
+● перемещение снизу-вверх (при движении DOWN нажатие стрелки вверх).
+Функция должна иметь вид:
+int checkDirection(snake_t* snake, int32_t key).
+
+// HW4
+int checkDirection(snake_t* snake, int32_t key)
+{
+	if ((key == snake->controls[0].down || key == snake->controls[1].down || key == snake->controls[2].down) && snake->direction != UP)
+		snake->direction = DOWN;
+    else if ((key == snake->controls[0].up || key == snake->controls[1].up || key == snake->controls[2].up) && snake->direction != DOWN)
+        snake->direction = UP;
+    else if ((key == snake->controls[0].right || key == snake->controls[1].right || key == snake->controls[2].right) && snake->direction != LEFT)
+        snake->direction = RIGHT;
+    else if ((key == snake->controls[0].left || key == snake->controls[1].left || key == snake->controls[2].left) && snake->direction != RIGHT)
+        snake->direction = LEFT;
+        
+    return snake->direction;
+}
